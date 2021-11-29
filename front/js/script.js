@@ -1,10 +1,8 @@
 //declaration de constante
 const items = document.querySelector("#items");
-
+const URL = `http://localhost:3000/api/products`;
 //déclaration de variable
-let URL = `http://localhost:3000/api/products`;
-let searchParam = new URLSearchParams(window.location.search);
-console.log(searchParam);
+
 let articlesId;
 let imgArticles;
 let articleName;
@@ -15,6 +13,11 @@ let articleDescription;
 // on contacte l'url de l'api pour recuperer une promesse
 fetch(URL)
   .then((Response) => Response.json())
+  .catch(
+    (error) =>
+      (items.innerHTML =
+        "Nous rencontrons actuellement un problème merci de réessayer ulterieurement.")
+  )
 
   //attribution des donnée de l'api au DOM
   .then((data) => {
@@ -36,8 +39,6 @@ fetch(URL)
       items.innerHTML += `${a}<article><img src="${imgArticles}" /> <h3 class="productName">${articleName}</h3><p class="productDescription">${articleDescription}</p></article>${endA}`;
     }
   })
-  .catch(
-    (error) =>
-      (items.innerHTML =
-        "Nous rencontrons actuellement un problème merci de réessayer ulterieurement.")
-  );
+  .catch((error) => {
+    items.innerHTML = `<article><p>Nous rencontrons actuellement un problème merci de réessayer ulterieurement. </p></article>`;
+  });
