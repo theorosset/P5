@@ -1,44 +1,38 @@
 //declaration de constante
 const items = document.querySelector("#items");
 const URL = `http://localhost:3000/api/products`;
-//déclaration de variable
 
-let articlesId;
-let imgArticles;
-let articleName;
-let articleDescription;
+//recuperation des donner de l'api
+async function getArticle() {
+  let response = await fetch(URL);
+  let returnResponse = await response.json();
+  return returnResponse;
+}
 
-//déclaration de fonction
+//répartition des donner recuperer dans le DOM
+async function postArticle() {
+  await getArticle()
+    .then(function (data) {
+      for (i = 0; i < data.length; i++) {
+        let articlesId = data[i]._id;
+        let imgArticles = data[i].imageUrl;
+        let articleName = data[i].name;
+        let articleDescription = data[i].description;
 
-// on contacte l'url de l'api pour recuperer une promesse
-fetch(URL)
-  .then((Response) => Response.json())
-  .catch(
-    (error) =>
-      (items.innerHTML =
-        "Nous rencontrons actuellement un problème merci de réessayer ulterieurement.")
-  )
+        //creation de la balise <a></a>
+        let a = `<a href="product.html?id=${articlesId}">`;
+        let endA = `</a>`;
+        console.log(a);
 
-  //attribution des donnée de l'api au DOM
-  .then((data) => {
-    console.log(data);
-    // boucle for pour récuperer les ID, images , noms et les descriptions des produits
-    for (i = 0; i < data.length; i++) {
-      articlesId = data[i]._id;
-      imgArticles = data[i].imageUrl;
-      articleName = data[i].name;
-      articleDescription = data[i].description;
+        //creation d'une balise article pour les elements html
 
-      //creation de la balise <a></a>
-      let a = `<a href="product.html?id=${articlesId}">`;
-      let endA = `</a>`;
-      console.log(a);
+        items.innerHTML += `${a}<article><img src="${imgArticles}" /> <h3 class="productName">${articleName}</h3><p class="productDescription">${articleDescription}</p></article>${endA}`;
+      }
+    })
+    .catch((error) => {
+      items.innerHTML = `<article><p>Nous rencontrons actuellement un problème merci de réessayer ulterieurement. </p></article>`;
+    });
+}
 
-      //creation d'une balise article pour les elements html
-
-      items.innerHTML += `${a}<article><img src="${imgArticles}" /> <h3 class="productName">${articleName}</h3><p class="productDescription">${articleDescription}</p></article>${endA}`;
-    }
-  })
-  .catch((error) => {
-    items.innerHTML = `<article><p>Nous rencontrons actuellement un problème merci de réessayer ulterieurement. </p></article>`;
-  });
+//activation de la fonction pour que les données soit repartie dans le DOM
+postArticle();
