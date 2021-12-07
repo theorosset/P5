@@ -1,65 +1,87 @@
-// declaration  pour recuperer l'id avec urlSearch
+//recuperation de l'id du produit selectionner
 let url = window.location.search;
-const searchParam = new URLSearchParams(url);
-const productId = searchParam.get("id");
-console.log(productId);
 
-//constante du chemin vers l'id de l'api
-const URL = `http://localhost:3000/api/products/${productId}`;
-console.log(URL);
+let urlParams = new URLSearchParams(url);
+const urlId = urlParams.get("id");
+console.log(urlId);
 
-// constante de récuperation d'élément du DOM
-const imgProduct = document.querySelector(".item__img");
-const nameProduct = document.querySelector("#title");
-const priceProduct = document.querySelector("#price");
-const descriptionProduct = document.querySelector("#description");
-const colorsChoose = document.querySelector("#colors");
-const quantityChoose = document.querySelector("#quantity");
+//fonction qui sera lu uniquement si la promesse est resolu
+postProduct();
 
-//on demande a l'api de nous donnez les données par rapport a l'id produit
-async function getProduct() {
-  let response = await fetch(URL);
-  let returnResponse = await response.json();
-  return returnResponse;
-}
-//repartition des données recuperer dans le DOM
+//--------fonction de repartition dans le DOM--------
 async function postProduct() {
-  await getProduct()
-    .then((data) => {
-      console.log(data);
-      let image = data.imageUrl;
-      let name = data.name;
-      let price = data.price;
-      let description = data.description;
-      let colors = data.colors;
+  const product = await getProduct();
+  const productCreate = createPlaceProduct(product);
+  const local = addLocal(product);
+}
 
-      console.log(price);
-      console.log(name);
-
-      //inseration de l'image dans le DOM
-      imgProduct.innerHTML = `<img src="${image}" alt="Photographie d'un canapé">`;
-      //insertion du nom dans le DOM
-      nameProduct.innerHTML = `${name}`;
-      //insertion du prix dans le DOM
-      priceProduct.innerHTML = `${price} `;
-      //insertion de la description
-      descriptionProduct.innerHTML = `${description}`;
-      //insertion des couleur
-
-      for (i = 0; i < colors.length; i += 1) {
-        //iteration dans le tableau des couleurs
-        let colorsElement = colors[i];
-        console.log(colorsElement);
-        //on crée les emplacements <option></option>
-        let option = document.createElement("option");
-        colorsChoose.appendChild(option);
-        //on recupere nos elements du tableau et on les appliques au DOM
-        option.innerText = colorsElement;
-      }
+//--------fonction de recuperation des données du produit selectionner avec son id-------
+function getProduct() {
+  return fetch(`http://localhost:3000/api/products/${urlId}`)
+    .then(function (response) {
+      return response.json();
     })
-    .catch((error) => {
-      imgProduct.innerHTML = `<p>Nous rencontrons actuellement un problème pour afficher  ce produit</p>`;
+    .then(function (product) {
+      return product;
+    })
+    .catch(function error() {
+      document.querySelector(
+        ".item__img"
+      ).innerHTML = `<p>Nous ne pouvons pas afficher ce produit actuellement</p>`;
     });
 }
 
-postProduct();
+//------------fonction d'insertion des produit-------------
+function createPlaceProduct(product) {
+  //inseration de notre  image dans le DOM
+  const img = document.createElement("img");
+  document.querySelector(".item__img").appendChild(img);
+  img.src = `${product.imageUrl}`;
+  img.alt = `${product.altTxt}`;
+
+  //inseration du titre dans le DOM
+  const title = document.createElement("h1");
+  document.querySelector("#title").appendChild(title);
+  title.innerText = `${product.name}`;
+
+  //inseration du prix dans le DOM
+  const price = document.querySelector("#price");
+  price.innerText = `${product.price} `;
+
+  //inseration du prix dans le DOM
+  const description = document.querySelector("#description");
+  description.innerText = `${product.description}`;
+
+  // itération dans le tableau des couleur et inseration des couleur disponible
+  for (i = 0; i < product.colors.length; i += 1) {
+    console.log(product.colors[i]);
+    let option = document.createElement("option");
+    document.querySelector("#colors").appendChild(option);
+    option.innerText = `${product.colors[i]}`;
+    option.value = `${product.colors[i]}`;
+  }
+}
+
+//--------------function d'ajout au localStorage au click------------
+function addLocal(product) {
+  document.querySelector("#addToCart").addEventListener("click", function () {
+    //recuperation des option du produit choisit
+    let productChoose = {
+      productName: product.name,
+      productDescription: product.description,
+      productprice: product.price,
+      productId: product._id,
+      productColor: document.querySelector("#colors").value,
+      productImg: product.imageUrl,
+      productQuantity: document.querySelector("#quantity").value,
+    };
+    let productArrayCart = [];
+
+    if (localStorage.getItem("product") != null) {
+      productArrayCart = JSON.parse(localStorage.getItem("product"));
+    } else {
+      productArrayCart.push(productChoose);
+    }
+    console.log(productArrayCart);
+  });
+}
