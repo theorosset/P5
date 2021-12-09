@@ -16,6 +16,7 @@ async function postProduct() {
 }
 
 //--------fonction de recuperation des données du produit selectionner avec son id-------
+
 function getProduct() {
   return fetch(`http://localhost:3000/api/products/${urlId}`)
     .then(function (response) {
@@ -33,6 +34,11 @@ function getProduct() {
 
 //------------fonction d'insertion des produit-------------
 function createPlaceProduct(product) {
+  /**
+   * @type {HTMLTitleElement}
+   *  */
+  document.title = `${product.name}`;
+
   //inseration de notre  image dans le DOM
   const img = document.createElement("img");
   document.querySelector(".item__img").appendChild(img);
@@ -63,8 +69,20 @@ function createPlaceProduct(product) {
 }
 
 //--------------function d'ajout au localStorage au click------------
+
+/**
+ * Ajoute un canapé dans le local storage
+ *
+ * @param {object} product le canapé a ajouté
+ *
+ */
 function addLocal(product) {
   document.querySelector("#addToCart").addEventListener("click", function () {
+    /**
+     * @type {HTMLInputElement}
+     *  */
+    const quantityInput = document.querySelector("#quantity");
+
     //recuperation des option du produit choisit
     let productChoose = {
       productName: product.name,
@@ -73,15 +91,28 @@ function addLocal(product) {
       productId: product._id,
       productColor: document.querySelector("#colors").value,
       productImg: product.imageUrl,
-      productQuantity: document.querySelector("#quantity").value,
+      productQuantity: quantityInput.valueAsNumber,
     };
+    //etat par defaut
     let productArrayCart = [];
 
     if (localStorage.getItem("product") != null) {
       productArrayCart = JSON.parse(localStorage.getItem("product"));
-    } else {
-      productArrayCart.push(productChoose);
     }
+
+    //ajout au panier
+    productArrayCart.push(productChoose);
+
+    //on enregistre dans le local storage
+    localStorage.setItem("product", JSON.stringify(productArrayCart));
+
     console.log(productArrayCart);
+    function search(product) {
+      if (product.productId === productChoose.productId) {
+        let quantity = product + productChoose.productQuantity;
+        console.log(quantity);
+      }
+      search(product);
+    }
   });
 }
