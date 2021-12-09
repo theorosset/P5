@@ -1,66 +1,134 @@
-//verification des element stocker
-let local = localStorage;
-console.log(local);
+let total = 0;
+//repartition des produit du ls dans page panier
+getItem();
 
-//array
+function getItem() {
+  const getElement = JSON.parse(localStorage.getItem("product"));
 
-// constante de récuperation d'élément du DOM
-const cartItems = document.querySelector("#cart__items");
+  //condition si il ya quelque chose dans le panier
+  if (getElement != null) {
+    for (i = 0; i < getElement.length; i++) {
+      createInDom(getElement);
+      TotalPrice(getElement);
+    }
 
-//recuperation des element mis dans le localStorage
-function getStorage() {
-  let quantity = local.quantity;
-  let colors = local.colors;
-  let image = local.image;
-  let price = local.price;
-  let name = local.name;
-  console.log(quantity);
-  console.log(colors);
-  console.log(image);
-  console.log(price);
-  console.log(name);
+    //si le panier est vide
+  } else {
+    document.querySelector(
+      "#cart__items"
+    ).innerHTML = `<p>Il y a actuellement aucun produit dans votre panier</p>`;
+  }
 }
 
-//creation des emplacement  dans le DOM
-function creaElementDom() {
+/**
+ *
+ * @param {object} getElement recupere le produit
+ *
+ */
+function createInDom(getElement) {
+  const cartItems = document.querySelector("#cart__items");
+
+  //------------creation-----------------------
+
   //creation de la balise article dans le DOM
-  let article = document.createElement("article");
+  const article = document.createElement("article");
   article.classList.add("cart__item");
+  article.setAttribute("data-id", getElement[i].productId);
+  article.setAttribute("data-color", getElement[i].productColor);
   cartItems.appendChild(article);
 
   //creation de la div qui prendra l'image
-  let divImg = document.createElement("div");
+  const divImg = document.createElement("div");
   divImg.classList.add("cart__item__img");
-  document.querySelector(".cart__item").appendChild(divImg);
+  article.appendChild(divImg);
 
   //creation de la  div parent qui prendra une div pour le nom, la couleur et le prix
-  let divParentDescript = document.createElement("div");
+  const divParentDescript = document.createElement("div");
   divParentDescript.classList.add("cart__item__content");
   article.appendChild(divParentDescript);
 
   //creation  de la div enfant pour la couleur, nom, prix
-  let divNamePriceColors = document.createElement("div");
+  const divNamePriceColors = document.createElement("div");
   divNamePriceColors.classList.add("cart__item__content__description");
   divParentDescript.appendChild(divNamePriceColors);
 
   //creation de la div parent qui prendra une div pour la quantité
-  let divParentQuantity = document.createElement("div");
+  const divParentQuantity = document.createElement("div");
   divParentQuantity.classList.add("cart__item__content__settings");
   divParentDescript.appendChild(divParentQuantity);
 
   //creation de la div enfant pour la quantité
-  let divQuantity = document.createElement("div");
+  const divQuantity = document.createElement("div");
   divQuantity.classList.add("cart__item__content__settings__quantity");
   divParentQuantity.appendChild(divQuantity);
 
   //creation de la div parent pour la suppression
-  let divParentSuppr = document.createElement("div");
+  const divParentSuppr = document.createElement("div");
   divParentSuppr.classList.add("cart__item__content__settings__delete");
   divParentQuantity.appendChild(divParentSuppr);
 
   //creation de la div parent pour la suppression
-  let divEnfantSuppr = document.createElement("div");
+  const divEnfantSuppr = document.createElement("div");
   divEnfantSuppr.classList.add("deleteItem");
   divParentSuppr.appendChild(divEnfantSuppr);
+
+  //----------------------insertion--------------------------------
+
+  //insertion de l'image
+  const img = document.createElement("img");
+  divImg.appendChild(img);
+  img.src = getElement[i].productImg;
+  img.alt = getElement[i].attributAlt;
+
+  // insertion du nom du produit
+  const productName = document.createElement("h2");
+
+  divNamePriceColors.appendChild(productName);
+  productName.innerText = getElement[i].productName;
+
+  //insertion de la couleur
+  const productColor = document.createElement("p");
+
+  divNamePriceColors.appendChild(productColor);
+
+  productColor.innerText = getElement[i].productColor;
+
+  //insertion du prix
+  const productPrice = document.createElement("p");
+
+  divNamePriceColors.appendChild(productPrice);
+
+  productPrice.innerText = getElement[i].productPrice + " €";
+  //insertion de la quantite
+  const quantityP = document.createElement("p");
+
+  divQuantity.appendChild(quantityP);
+  quantityP.innerText = "Qté :";
+
+  //input pour modifier la quantite
+  const quantityInput = document.createElement("input");
+  quantityInput.classList.add("itemQuantity");
+
+  divQuantity.appendChild(quantityInput);
+
+  //ajout des attribut au input
+  quantityInput.setAttribute("type", "number");
+  quantityInput.setAttribute("name", "itemQuantity");
+  quantityInput.setAttribute("min", "1");
+  quantityInput.setAttribute("max", "100");
+  quantityInput.valueAsNumber = getElement[i].productQuantity;
+
+  //inseration de la suppression
+  const delet = document.createElement("p");
+  divEnfantSuppr.appendChild(delet);
+
+  delet.innerText = "Supprimez";
 }
-creaElementDom();
+
+//calcule pour le prix total
+function TotalPrice(getElement) {
+  const priceTotal = document.querySelector("#totalPrice");
+  let price = getElement[i].productPrice;
+  total += price;
+  priceTotal.innerText = total;
+}
