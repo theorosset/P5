@@ -103,10 +103,14 @@ function addLocal(product) {
 
     // si il y a déja le même produit dans le panier
     if (productArrayCart != null) {
-      const searchInLs = productArrayCart.find(function (proCoId) {
-        proCoId.productId === urlId &&
+      const searchInLs = productArrayCart.find((proCoId) => {
+        proCoId.productId === productArrayCart.productId &&
           proCoId.productColor === productChoose.productColor;
         console.log("true");
+        console.log(proCoId.productId);
+        console.log(proCoId.productColor);
+        console.log(productChoose.productColor);
+        console.log(productChoose.productId);
       });
 
       //si la recherche est validé
