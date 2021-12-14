@@ -87,10 +87,11 @@ function addLocal(product) {
     let productChoose = {
       productName: product.name,
       productDescription: product.description,
-      productprice: product.price,
+      productPrice: product.price,
       productId: product._id,
       productColor: document.querySelector("#colors").value,
       productImg: product.imageUrl,
+      attributAlt: product.altTxt,
       productQuantity: quantityInput.valueAsNumber,
     };
     //etat par defaut
@@ -100,19 +101,30 @@ function addLocal(product) {
       productArrayCart = JSON.parse(localStorage.getItem("product"));
     }
 
-    //ajout au panier
-    productArrayCart.push(productChoose);
+    // si il y a déja le même produit dans le panier
+    if (productArrayCart != null) {
+      const searchInLs = productArrayCart.find(function (proCoId) {
+        proCoId.productId === urlId &&
+          proCoId.productColor === productChoose.productColor;
+        console.log("true");
+      });
 
-    //on enregistre dans le local storage
-    localStorage.setItem("product", JSON.stringify(productArrayCart));
-
-    console.log(productArrayCart);
-    function search(product) {
-      if (product.productId === productChoose.productId) {
-        let quantity = product + productChoose.productQuantity;
-        console.log(quantity);
+      //si la recherche est validé
+      if (searchInLs) {
+        let TotalQuantity =
+          productChoose.productQuantity + searchInLs.productQuantity;
+        searchInLs.productQuantity = TotalQuantity;
+        console.log("Yep");
+        localStorage.setItem("product", JSON.stringify(productArrayCart));
       }
-      search(product);
+
+      //sinon on ajoute l'élément au panier
+      else {
+        productArrayCart.push(productChoose);
+        localStorage.setItem("product", JSON.stringify(productArrayCart));
+        console.log("nop");
+        console.log(productArrayCart);
+      }
     }
   });
 }
