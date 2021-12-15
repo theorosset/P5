@@ -18,18 +18,18 @@ async function postProduct() {
 //--------fonction de recuperation des données du produit selectionner avec son id-------
 
 function getProduct() {
-  return fetch(`http://localhost:3000/api/products/${urlId}`)
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (product) {
-      return product;
-    })
-    .catch(function error() {
-      document.querySelector(
-        ".item__img"
-      ).innerHTML = `<p>Nous ne pouvons pas afficher ce produit actuellement</p>`;
-    });
+  return (
+    fetch(`http://localhost:3000/api/products/${urlId}`)
+      .then(function (response) {
+        return response.json();
+      })
+      //on capture l'erreur si il y en a une
+      .catch(function error() {
+        document.querySelector(
+          ".item__img"
+        ).innerHTML = `<p>Nous ne pouvons pas afficher ce produit actuellement</p>`;
+      })
+  );
 }
 
 //------------fonction d'insertion des produit-------------
@@ -100,15 +100,24 @@ function addLocal(product) {
     if (localStorage.getItem("product") != null) {
       productArrayCart = JSON.parse(localStorage.getItem("product"));
     }
+    // si aucune couleur n'a été choisit
+    if (productChoose.productColor == "") {
+      alert("Veuillez choisir une couleur.");
+      return;
+    }
 
+    //
+    if (productChoose.productQuantity < 1) {
+      productChoose.productQuantity = 1;
+    }
     // si il y a déja le même produit dans le panier
     if (productArrayCart != null) {
-      const searchInLs = productArrayCart.find((proCoId) => {
-        proCoId.productId === productArrayCart.productId &&
-          proCoId.productColor === productChoose.productColor;
+      const searchInLs = productArrayCart.find((procolorId) => {
+        procolorId.productId === productChoose.productId &&
+          procolorId.productColor === productChoose.productColor;
         console.log("true");
-        console.log(proCoId.productId);
-        console.log(proCoId.productColor);
+        console.log(procolorId.productId);
+        console.log(procolorId.productColor);
         console.log(productChoose.productColor);
         console.log(productChoose.productId);
       });
