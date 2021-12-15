@@ -1,15 +1,14 @@
+let productArrayCart = JSON.parse(localStorage.getItem("product"));
 let total = 0;
 //repartition des produit du ls dans page panier
 getItem();
 
 function getItem() {
-  const getElement = JSON.parse(localStorage.getItem("product"));
-
   //condition si il ya quelque chose dans le panier
-  if (getElement != null) {
-    for (i = 0; i < getElement.length; i++) {
-      createInDom(getElement);
-      TotalPrice(getElement);
+  if (productArrayCart != null) {
+    for (i = 0; i < productArrayCart.length; i++) {
+      createInDom(productArrayCart);
+      TotalPrice(productArrayCart);
     }
 
     //si le panier est vide
@@ -22,19 +21,19 @@ function getItem() {
 
 /**
  *
- * @param {object} getElement recupere le produit
+ * @param {object} productArrayCart recupere le produit
  *
  */
-function createInDom(getElement) {
+function createInDom(productArrayCart) {
   const cartItems = document.querySelector("#cart__items");
 
-  //------------creation-----------------------
+  //--------------------creation-------------------------------------
 
   //creation de la balise article dans le DOM
   const article = document.createElement("article");
   article.classList.add("cart__item");
-  article.setAttribute("data-id", getElement[i].productId);
-  article.setAttribute("data-color", getElement[i].productColor);
+  article.setAttribute("data-id", productArrayCart[i].productId);
+  article.setAttribute("data-color", productArrayCart[i].productColor);
   cartItems.appendChild(article);
 
   //creation de la div qui prendra l'image
@@ -67,38 +66,33 @@ function createInDom(getElement) {
   divParentSuppr.classList.add("cart__item__content__settings__delete");
   divParentQuantity.appendChild(divParentSuppr);
 
-  //creation de la div parent pour la suppression
-  const divEnfantSuppr = document.createElement("div");
-  divEnfantSuppr.classList.add("deleteItem");
-  divParentSuppr.appendChild(divEnfantSuppr);
-
   //----------------------insertion--------------------------------
 
   //insertion de l'image
   const img = document.createElement("img");
   divImg.appendChild(img);
-  img.src = getElement[i].productImg;
-  img.alt = getElement[i].attributAlt;
+  img.src = productArrayCart[i].productImg;
+  img.alt = productArrayCart[i].attributAlt;
 
   // insertion du nom du produit
   const productName = document.createElement("h2");
 
   divNamePriceColors.appendChild(productName);
-  productName.innerText = getElement[i].productName;
+  productName.innerText = productArrayCart[i].productName;
 
   //insertion de la couleur
   const productColor = document.createElement("p");
 
   divNamePriceColors.appendChild(productColor);
 
-  productColor.innerText = getElement[i].productColor;
+  productColor.innerText = productArrayCart[i].productColor;
 
   //insertion du prix
   const productPrice = document.createElement("p");
 
   divNamePriceColors.appendChild(productPrice);
 
-  productPrice.innerText = getElement[i].productPrice + " €";
+  productPrice.innerText = productArrayCart[i].productPrice + " €";
   //insertion de la quantite
   const quantityP = document.createElement("p");
 
@@ -116,19 +110,34 @@ function createInDom(getElement) {
   quantityInput.setAttribute("name", "itemQuantity");
   quantityInput.setAttribute("min", "1");
   quantityInput.setAttribute("max", "100");
-  quantityInput.valueAsNumber = getElement[i].productQuantity;
+  quantityInput.valueAsNumber = productArrayCart[i].productQuantity;
 
   //inseration de la suppression
   const delet = document.createElement("p");
-  divEnfantSuppr.appendChild(delet);
+  delet.classList.add("deleteItem");
+  divParentSuppr.appendChild(delet);
 
-  delet.innerText = "Supprimez";
+  delet.innerText = "Supprimer";
 }
 
+//suppression du produit
+function itemDelet() {
+  //selection du "bouton" supprimer
+  const btnDelet = document.querySelectorAll(".deleteItem");
+  console.log(btnDelet);
+
+  //on vas chercher chaque bouton supprimer avec une boucle
+  for (i = 0; i < btnDelet.length; i++) {
+    console.log(btnDelet[i]);
+    btnDelet[i].addEventListener("click", function () {});
+  }
+}
+itemDelet();
 //calcule pour le prix total
-function TotalPrice(getElement) {
+function TotalPrice(productArrayCart) {
   const priceTotal = document.querySelector("#totalPrice");
-  let price = getElement[i].productPrice;
+  let price =
+    productArrayCart[i].productPrice * productArrayCart[i].productQuantity;
   total += price;
   priceTotal.innerText = total;
 }
