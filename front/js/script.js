@@ -6,7 +6,7 @@ main();
 async function main() {
   let articles = await getArticles();
 
-  for (i = 0; i < articles.length; i++) {
+  for (let i = 0; i < articles.length; i++) {
     createElementInDOM(articles[i]);
   }
 }
