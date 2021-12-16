@@ -10,6 +10,7 @@ async function getItem() {
     for (let i = 0; i < productArrayCart.length; i++) {
       createInDom(productArrayCart[i], articles[i]);
       TotalPrice(productArrayCart[i], articles[i]);
+      deletArticle(productArrayCart[i], articles[i]);
     }
     //si le panier est vide
   } else {
@@ -136,8 +137,8 @@ function createInDom(productArrayCart, Article) {
 }
 
 //calcule pour le prix total
+let total = 0;
 function TotalPrice(productArrayCart, Article) {
-  let total = 0;
   const priceTotal = document.querySelector("#totalPrice");
   let price = Article.price * productArrayCart.productQuantity;
   total += price;
