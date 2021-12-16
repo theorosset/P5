@@ -10,14 +10,14 @@ postProduct();
 
 //--------fonction de repartition dans le DOM--------
 async function postProduct() {
-  const product = await getProduct();
+  const product = await getProducts();
   const productCreate = createPlaceProduct(product);
   const local = addLocal(product);
 }
 
 //--------fonction de recuperation des données du produit selectionner avec son id-------
 
-function getProduct() {
+function getProducts() {
   return (
     fetch(`http://localhost:3000/api/products/${urlId}`)
       .then(function (response) {
@@ -59,7 +59,7 @@ function createPlaceProduct(product) {
   description.innerText = `${product.description}`;
 
   // itération dans le tableau des couleur et inseration des couleur disponible
-  for (i = 0; i < product.colors.length; i += 1) {
+  for (let i = 0; i < product.colors.length; i += 1) {
     console.log(product.colors[i]);
     let option = document.createElement("option");
     document.querySelector("#colors").appendChild(option);
@@ -85,13 +85,8 @@ function addLocal(product) {
 
     //recuperation des option du produit choisit
     let productChoose = {
-      productName: product.name,
-      productDescription: product.description,
-      productPrice: product.price,
       productId: product._id,
       productColor: document.querySelector("#colors").value,
-      productImg: product.imageUrl,
-      attributAlt: product.altTxt,
       productQuantity: quantityInput.valueAsNumber,
     };
     //etat par defaut
@@ -113,13 +108,10 @@ function addLocal(product) {
     // si il y a déja le même produit dans le panier
     if (productArrayCart != null) {
       const searchInLs = productArrayCart.find((procolorId) => {
-        procolorId.productId === productChoose.productId &&
-          procolorId.productColor === productChoose.productColor;
-        console.log("true");
-        console.log(procolorId.productId);
-        console.log(procolorId.productColor);
-        console.log(productChoose.productColor);
-        console.log(productChoose.productId);
+        return (
+          procolorId.productId === productChoose.productId &&
+          procolorId.productColor === productChoose.productColor
+        );
       });
 
       //si la recherche est validé
@@ -127,7 +119,7 @@ function addLocal(product) {
         let TotalQuantity =
           productChoose.productQuantity + searchInLs.productQuantity;
         searchInLs.productQuantity = TotalQuantity;
-        console.log("Yep");
+        console.log(productArrayCart);
         localStorage.setItem("product", JSON.stringify(productArrayCart));
       }
 
@@ -135,7 +127,7 @@ function addLocal(product) {
       else {
         productArrayCart.push(productChoose);
         localStorage.setItem("product", JSON.stringify(productArrayCart));
-        console.log("nop");
+
         console.log(productArrayCart);
       }
     }
