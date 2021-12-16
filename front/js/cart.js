@@ -1,16 +1,16 @@
 let productArrayCart = JSON.parse(localStorage.getItem("product"));
-let total = 0;
+
 //repartition des produit du ls dans page panier
 getItem();
 
-function getItem() {
+async function getItem() {
+  let articles = await getArticles();
   //condition si il ya quelque chose dans le panier
   if (productArrayCart != null) {
-    for (i = 0; i < productArrayCart.length; i++) {
-      createInDom(productArrayCart);
-      TotalPrice(productArrayCart);
+    for (let i = 0; i < productArrayCart.length; i++) {
+      createInDom(productArrayCart[i], articles[i]);
+      TotalPrice(productArrayCart[i], articles[i]);
     }
-
     //si le panier est vide
   } else {
     document.querySelector(
@@ -19,12 +19,27 @@ function getItem() {
   }
 }
 
+function getArticles() {
+  return (
+    fetch(`http://localhost:3000/api/products`)
+      .then(function (response) {
+        return response.json();
+      })
+      //on capture l'erreur si il y en a une
+      .catch(function error() {
+        document.querySelector(
+          ".item__img"
+        ).innerHTML = `<p>Nous ne pouvons pas afficher ce produit actuellement</p>`;
+      })
+  );
+}
+
 /**
  *
  * @param {object} productArrayCart recupere le produit
  *
  */
-function createInDom(productArrayCart) {
+function createInDom(productArrayCart, Article) {
   const cartItems = document.querySelector("#cart__items");
 
   //--------------------creation-------------------------------------
@@ -32,8 +47,8 @@ function createInDom(productArrayCart) {
   //creation de la balise article dans le DOM
   const article = document.createElement("article");
   article.classList.add("cart__item");
-  article.setAttribute("data-id", productArrayCart[i].productId);
-  article.setAttribute("data-color", productArrayCart[i].productColor);
+  article.setAttribute("data-id", productArrayCart.productId);
+  article.setAttribute("data-color", productArrayCart.productColor);
   cartItems.appendChild(article);
 
   //creation de la div qui prendra l'image
@@ -71,28 +86,28 @@ function createInDom(productArrayCart) {
   //insertion de l'image
   const img = document.createElement("img");
   divImg.appendChild(img);
-  img.src = productArrayCart[i].productImg;
-  img.alt = productArrayCart[i].attributAlt;
+  img.src = Article.imageUrl;
+  img.alt = Article.altTxt;
 
   // insertion du nom du produit
   const productName = document.createElement("h2");
 
   divNamePriceColors.appendChild(productName);
-  productName.innerText = productArrayCart[i].productName;
+  productName.innerText = Article.name;
 
   //insertion de la couleur
   const productColor = document.createElement("p");
 
   divNamePriceColors.appendChild(productColor);
 
-  productColor.innerText = productArrayCart[i].productColor;
+  productColor.innerText = productArrayCart.productColor;
 
   //insertion du prix
   const productPrice = document.createElement("p");
 
   divNamePriceColors.appendChild(productPrice);
 
-  productPrice.innerText = productArrayCart[i].productPrice + " €";
+  productPrice.innerText = Article.price + " €";
   //insertion de la quantite
   const quantityP = document.createElement("p");
 
@@ -110,7 +125,7 @@ function createInDom(productArrayCart) {
   quantityInput.setAttribute("name", "itemQuantity");
   quantityInput.setAttribute("min", "1");
   quantityInput.setAttribute("max", "100");
-  quantityInput.valueAsNumber = productArrayCart[i].productQuantity;
+  quantityInput.valueAsNumber = productArrayCart.productQuantity;
 
   //inseration de la suppression
   const delet = document.createElement("p");
@@ -120,24 +135,13 @@ function createInDom(productArrayCart) {
   delet.innerText = "Supprimer";
 }
 
-//suppression du produit
-function itemDelet() {
-  //selection du "bouton" supprimer
-  const btnDelet = document.querySelectorAll(".deleteItem");
-  console.log(btnDelet);
-
-  //on vas chercher chaque bouton supprimer avec une boucle
-  for (i = 0; i < btnDelet.length; i++) {
-    console.log(btnDelet[i]);
-    btnDelet[i].addEventListener("click", function () {});
-  }
-}
-itemDelet();
 //calcule pour le prix total
-function TotalPrice(productArrayCart) {
+function TotalPrice(productArrayCart, Article) {
+  let total = 0;
   const priceTotal = document.querySelector("#totalPrice");
-  let price =
-    productArrayCart[i].productPrice * productArrayCart[i].productQuantity;
+  let price = Article.price * productArrayCart.productQuantity;
   total += price;
   priceTotal.innerText = total;
+
+  return total;
 }
