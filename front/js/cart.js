@@ -6,13 +6,14 @@ postItem();
 
 async function postItem() {
   let articles = await getArticles();
-
+  modifQuantity();
   //si il y a quelque chose dans le localstorage
   if (productArrayCart != null) {
     for (let i = 0; i < productArrayCart.length; i++) {
       TotalPrice(productArrayCart[i], articles[i]);
       createInDom(productArrayCart[i], articles[i]);
-      deletItem();
+      deletItem(productArrayCart[i]);
+      modifQuantity(productArrayCart[i]);
     }
   }
 }
@@ -132,20 +133,48 @@ function createInDom(productArrayCart, articles) {
 }
 
 //------------------------suppression--------------------------
-function deletItem() {
+function deletItem(productArrayCart) {
   const btnDelet = document.querySelectorAll(".deleteItem");
 
   for (let i = 0; i < btnDelet.length; i++) {
-    btnDelet[i].addEventListener("click", function () {});
+    btnDelet[i].addEventListener("click", function (e) {
+      console.log(e.target);
+    });
   }
 }
 
-//--------------------modification--------------
+/**
+ * --------------------modification de la quantité--------------
+ * @type {HTMLInputElement}
+ *
+ */
 function modifQuantity() {
   const inputQuantity = document.querySelectorAll(".itemQuantity");
-  for (let i = 0; i < inputQuantity.length; i++) {
-    inputQuantity[i].addEventListener("change", function () {});
-  }
+
+  //pour chaque input quantité
+  inputQuantity.forEach(function (inputQuantity) {
+    console.log(inputQuantity);
+    //on recupere les input qui son dans la balise article
+    const inputClosest = inputQuantity.closest("Article");
+
+    let newQuantity = "";
+    const id = inputClosest.dataset.id;
+    const color = inputClosest.dataset.color;
+
+    //on enregistre chaque changement de la quantité dans le DOM
+    inputQuantity.addEventListener("change", function (e) {
+      e.preventDefault();
+      newQuantity = inputQuantity.valueAsNumber;
+
+      //pour chaque article du LS on enregistre la nouvelle quantité
+      productArrayCart.forEach(function (article) {
+        if (article.productId === id && article.productColor === color) {
+          article.productQuantity = newQuantity;
+          localStorage.setItem("product", JSON.stringify(productArrayCart));
+        }
+      });
+    });
+  });
 }
 
 //-------------------------calcule du prix total-----------------
