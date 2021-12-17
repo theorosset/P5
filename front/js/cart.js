@@ -1,25 +1,23 @@
+//recuperation des articles dans le ls
 let productArrayCart = JSON.parse(localStorage.getItem("product"));
 
 //repartition des produit du ls dans page panier
-getItem();
+postItem();
 
-async function getItem() {
+async function postItem() {
   let articles = await getArticles();
-  //condition si il ya quelque chose dans le panier
+
+  //si il y a quelque chose dans le localstorage
   if (productArrayCart != null) {
     for (let i = 0; i < productArrayCart.length; i++) {
-      createInDom(productArrayCart[i], articles[i]);
       TotalPrice(productArrayCart[i], articles[i]);
-      deletArticle(productArrayCart[i], articles[i]);
+      createInDom(productArrayCart[i], articles[i]);
+      deletItem();
     }
-    //si le panier est vide
-  } else {
-    document.querySelector(
-      "#cart__items"
-    ).innerHTML = `<p>Il y a actuellement aucun produit dans votre panier</p>`;
   }
 }
 
+//recuperation des articles dans l'api
 function getArticles() {
   return (
     fetch(`http://localhost:3000/api/products`)
@@ -35,12 +33,9 @@ function getArticles() {
   );
 }
 
-/**
- *
- * @param {object} productArrayCart recupere le produit
- *
- */
-function createInDom(productArrayCart, Article) {
+//recuperation des articles dans le ls
+
+function createInDom(productArrayCart, articles) {
   const cartItems = document.querySelector("#cart__items");
 
   //--------------------creation-------------------------------------
@@ -87,14 +82,14 @@ function createInDom(productArrayCart, Article) {
   //insertion de l'image
   const img = document.createElement("img");
   divImg.appendChild(img);
-  img.src = Article.imageUrl;
-  img.alt = Article.altTxt;
+  img.src = articles.imageUrl;
+  img.alt = articles.altTxt;
 
   // insertion du nom du produit
   const productName = document.createElement("h2");
 
   divNamePriceColors.appendChild(productName);
-  productName.innerText = Article.name;
+  productName.innerText = articles.name;
 
   //insertion de la couleur
   const productColor = document.createElement("p");
@@ -108,7 +103,7 @@ function createInDom(productArrayCart, Article) {
 
   divNamePriceColors.appendChild(productPrice);
 
-  productPrice.innerText = Article.price + " €";
+  productPrice.innerText = articles.price + " €";
   //insertion de la quantite
   const quantityP = document.createElement("p");
 
@@ -136,7 +131,25 @@ function createInDom(productArrayCart, Article) {
   delet.innerText = "Supprimer";
 }
 
-//calcule pour le prix total
+//------------------------suppression--------------------------
+function deletItem() {
+  const btnDelet = document.querySelectorAll(".deleteItem");
+
+  for (let i = 0; i < btnDelet.length; i++) {
+    btnDelet[i].addEventListener("click", function () {});
+  }
+}
+
+//--------------------modification--------------
+function modifQuantity() {
+  const inputQuantity = document.querySelectorAll(".itemQuantity");
+  for (let i = 0; i < inputQuantity.length; i++) {
+    inputQuantity[i].addEventListener("change", function () {});
+  }
+}
+
+//-------------------------calcule du prix total-----------------
+
 let total = 0;
 function TotalPrice(productArrayCart, Article) {
   const priceTotal = document.querySelector("#totalPrice");
@@ -145,4 +158,183 @@ function TotalPrice(productArrayCart, Article) {
   priceTotal.innerText = total;
 
   return total;
+}
+
+//--------------------------------validation du formulaire----------------------
+function formValid() {
+  const form = document.querySelector(".cart__order__form");
+  const order = document.querySelector("#order");
+  console.log(form);
+
+  form.firstName.addEventListener("change", function () {
+    FirstnameValid(form.firstName);
+  });
+
+  form.lastName.addEventListener("change", function () {
+    LastnameValid(form.lastName);
+  });
+
+  form.address.addEventListener("change", function () {
+    AdressValid(form.address);
+  });
+
+  form.city.addEventListener("change", function () {
+    CityValid(form.city);
+  });
+
+  form.email.addEventListener("change", function () {
+    emailValid(form.email);
+  });
+
+  OrderInfoSet(form);
+}
+/**
+ * ----------validation du prenom
+ *
+ * @param {htmlElementDOM} inputAddress
+ * @returns boolean
+ *
+ * */
+
+function FirstnameValid(inputFirstName) {
+  // Ajout du Regex
+  let nameRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
+  //test de notre expression reguliere
+  let testName = nameRegExp.test(inputFirstName.value);
+  console.log(testName);
+
+  //si le test renvoie false on ajoute le message d'erreur
+  if (testName === false) {
+    document.querySelector("#firstNameErrorMsg").innerText =
+      "Veuillez entrer un Prénom valide";
+  }
+
+  //sinon aucun message ne s'affiche
+  else {
+    document.querySelector("#firstNameErrorMsg").innerText = "";
+  }
+  return (testName = nameRegExp.test(inputFirstName));
+}
+
+/**
+ * ------------validation du nom
+ * @param {htmlElementDOM} inputLastName
+ * @returns boolean
+ *
+ * */
+
+function LastnameValid(inputLastName) {
+  let nameRegExp = new RegExp("^[a-zA-Z ,.'-]+$", "i");
+  let testName = nameRegExp.test(inputLastName.value);
+  console.log(testName);
+
+  //si le test renvoie false on ajoute le message d'erreur
+  if (testName === false) {
+    document.querySelector("#lastNameErrorMsg").innerText =
+      "Veuillez entrer un Nom valide";
+  }
+
+  //sinon aucun message ne s'affiche
+  else {
+    document.querySelector("#lastNameErrorMsg").innerText = "";
+  }
+  return (testName = nameRegExp.test(inputLastName));
+}
+/**
+ * -------------validation de l'adress
+ *
+ *  @param {htmlElementDOM} inputAddress
+ * @returns boolean
+ *
+ * */
+
+function AdressValid(inputAddress) {
+  let AdressRegExp = new RegExp(
+    "[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+"
+  );
+  let testAdress = AdressRegExp.test(inputAddress.value);
+  console.log(testAdress);
+
+  //si le test renvoie false on ajoute le message d'erreur
+  if (testAdress === false) {
+    document.querySelector("#addressErrorMsg").innerText =
+      "Veuillez entrer une adress valide";
+  }
+
+  //sinon aucun message ne s'affiche
+  else {
+    document.querySelector("#addressErrorMsg").innerText = "";
+  }
+  return (testAdress = AdressRegExp.test(inputAddress));
+}
+
+/**
+ * -----validation de la ville
+ *
+ * @param {htmlElementDOM} inputCity
+ * @returns boolean
+ *
+ * */
+//
+function CityValid(inputCity) {
+  let cityRegExp = new RegExp("^[a-zA-Z]+(?:[s-][a-zA-Z]+)*$");
+  let cityTest = cityRegExp.test(inputCity.value);
+  console.log(cityTest);
+
+  if (cityTest === false) {
+    document.querySelector("#cityErrorMsg").innerText =
+      "Veuillez entrer une ville valide";
+  }
+
+  //sinon aucun message ne s'affiche
+  else {
+    document.querySelector("#cityErrorMsg").innerText = "";
+  }
+  return (cityTest = cityRegExp.test(inputCity));
+}
+
+/**
+ * ---------validation de l'email
+ *
+ * @param {htmlElementDOM} inputEmail
+ * @returns boolean
+ *
+ * */
+function emailValid(inputEmail) {
+  let emailRegExp = new RegExp(
+    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,15}$"
+  );
+  let emailTest = emailRegExp.test(inputEmail.value);
+  console.log(emailTest);
+
+  if (emailTest === false) {
+    document.querySelector("#emailErrorMsg").innerText =
+      "Veuillez entrer un email valide";
+  }
+
+  //sinon aucun message ne s'affiche
+  else {
+    document.querySelector("#emailErrorMsg").innerText = "";
+  }
+  return (emailTest = emailRegExp.test(inputEmail));
+}
+formValid();
+
+/**
+ *----------enregistrement des information du formulaire dans le LS
+ * @param {htmlElementDOM} formulaire
+ *
+ */
+function OrderInfoSet(form) {
+  const order = document.querySelector("#order");
+
+  order.addEventListener("click", function () {
+    let contact = {
+      FormFirstName: form.firstName.value,
+      FormLastName: form.lastName.value,
+      FormAddress: form.address.value,
+      FormVille: form.city.value,
+      FormEmail: form.email.value,
+    };
+  });
 }
