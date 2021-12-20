@@ -6,16 +6,22 @@ postItem();
 
 async function postItem() {
   let articles = await getArticles();
-  modifQuantity();
-  //si il y a quelque chose dans le localstorage
+
   if (productArrayCart != null) {
-    for (let i = 0; i < productArrayCart.length; i++) {
-      TotalPrice(productArrayCart[i], articles[i]);
-      createInDom(productArrayCart[i], articles[i]);
-      deletItem(productArrayCart[i]);
-      modifQuantity(productArrayCart[i]);
-    }
+    //si il y a quelque chose dans le localstorage
+    itemSearchApi(articles, productArrayCart);
   }
+}
+
+//fonction pour récuperer les bonne information de l'api par rapport au info du local storage
+function itemSearchApi(article, productArrayCart) {
+  productArrayCart.forEach((el) => {
+    console.log(el);
+    const search = article.find(function ({ _id }) {
+      return _id === el.productId;
+    });
+    createInDom(productArrayCart, search);
+  });
 }
 
 //recuperation des articles dans l'api
@@ -34,9 +40,8 @@ function getArticles() {
   );
 }
 
-//recuperation des articles dans le ls
-
-function createInDom(productArrayCart, articles) {
+//fonction pour inserez les elements dans le dom
+function createInDom(productArrayCart, search) {
   const cartItems = document.querySelector("#cart__items");
 
   //--------------------creation-------------------------------------
@@ -83,14 +88,14 @@ function createInDom(productArrayCart, articles) {
   //insertion de l'image
   const img = document.createElement("img");
   divImg.appendChild(img);
-  img.src = articles.imageUrl;
-  img.alt = articles.altTxt;
+  img.src = search.imageUrl;
+  img.altTxt = search.altTxt;
 
   // insertion du nom du produit
   const productName = document.createElement("h2");
 
   divNamePriceColors.appendChild(productName);
-  productName.innerText = articles.name;
+  productName.innerText = search.name;
 
   //insertion de la couleur
   const productColor = document.createElement("p");
@@ -104,7 +109,7 @@ function createInDom(productArrayCart, articles) {
 
   divNamePriceColors.appendChild(productPrice);
 
-  productPrice.innerText = articles.price + " €";
+  productPrice.innerText = search.price + " €";
   //insertion de la quantite
   const quantityP = document.createElement("p");
 
