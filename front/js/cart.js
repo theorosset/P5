@@ -7,20 +7,22 @@ postItem();
 async function postItem() {
   let articles = await getArticles();
 
+  //si il y a quelque chose dans le localstorage
   if (productArrayCart != null) {
-    //si il y a quelque chose dans le localstorage
     itemSearchApi(articles, productArrayCart);
+    deletItem(productArrayCart, articles);
   }
 }
 
 //fonction pour récuperer les bonne information de l'api par rapport au info du local storage
 function itemSearchApi(article, productArrayCart) {
   productArrayCart.forEach((el) => {
-    console.log(el);
     const search = article.find(function ({ _id }) {
       return _id === el.productId;
     });
-    createInDom(el, search);
+    if (search) {
+      createInDom(el, search);
+    }
   });
 }
 
@@ -137,15 +139,32 @@ function createInDom(productArrayCart, search) {
   delet.innerText = "Supprimer";
 }
 
-//------------------------suppression--------------------------
+//-----------------------suppression de l'article dans le panier
 function deletItem(productArrayCart) {
   const btnDelet = document.querySelectorAll(".deleteItem");
 
-  for (let i = 0; i < btnDelet.length; i++) {
-    btnDelet[i].addEventListener("click", function (e) {
-      console.log(e.target);
+  //pour chaque bouton supprimer on récupere son id et sa couleur
+  btnDelet.forEach(function (btn) {
+    // on recupere chaque bouton  le plus proche de l'élément parent (balise article)
+    const btnClosest = btn.closest("Article");
+    const id = btnClosest.dataset.id;
+    const color = btnClosest.dataset.color;
+    console.log(id);
+    console.log(color);
+
+    // au clique sur  supprimer on supprime le bonne article
+    btn.addEventListener("click", function () {
+      productArrayCart.forEach(function (el) {
+        if (el.productId === id && el.productColor === color) {
+          console.log(delete el.productId);
+          console.log(delete el.productQuantity);
+          console.log(delete el.productColor);
+        }
+        localStorage.setItem("product", JSON.stringify(productArrayCart));
+      });
     });
-  }
+  });
+  console.log(productArrayCart);
 }
 
 /**
