@@ -11,6 +11,7 @@ async function postItem() {
   if (productArrayCart != null) {
     itemSearchApi(articles, productArrayCart);
     deletItem(productArrayCart, articles);
+    modifQuantity();
   }
 }
 
@@ -141,6 +142,7 @@ function createInDom(productArrayCart, search) {
 
 //-----------------------suppression de l'article dans le panier
 function deletItem(productArrayCart) {
+  console.log(productArrayCart);
   const btnDelet = document.querySelectorAll(".deleteItem");
 
   //pour chaque bouton supprimer on récupere son id et sa couleur
@@ -156,9 +158,9 @@ function deletItem(productArrayCart) {
     btn.addEventListener("click", function () {
       productArrayCart.forEach(function (el) {
         if (el.productId === id && el.productColor === color) {
-          console.log(delete el.productId);
-          console.log(delete el.productQuantity);
-          console.log(delete el.productColor);
+          delete el.productId;
+          delete el.productQuantity;
+          delete el.productColor;
         }
         localStorage.setItem("product", JSON.stringify(productArrayCart));
       });
@@ -169,7 +171,7 @@ function deletItem(productArrayCart) {
 
 /**
  * --------------------modification de la quantité--------------
- * @type {HTMLInputElement}
+ *
  *
  */
 function modifQuantity() {
@@ -193,24 +195,29 @@ function modifQuantity() {
       //pour chaque article du LS on enregistre la nouvelle quantité
       productArrayCart.forEach(function (article) {
         if (article.productId === id && article.productColor === color) {
+          console.log("qté :" + newQuantity);
           article.productQuantity = newQuantity;
+
+          TotalQuantity(productArrayCart);
           localStorage.setItem("product", JSON.stringify(productArrayCart));
         }
       });
     });
   });
 }
+//----------------------------------calcule de la quantité total
 
-//-------------------------calcule du prix total-----------------
+function TotalQuantity(productArrayCart) {
+  const TotalQuantity = document.querySelector("#totalQuantity");
+  //on iniatilise le total
+  let Total = 0;
 
-let total = 0;
-function TotalPrice(productArrayCart, Article) {
-  const priceTotal = document.querySelector("#totalPrice");
-  let price = Article.price * productArrayCart.productQuantity;
-  total += price;
-  priceTotal.innerText = total;
-
-  return total;
+  //pour chaque element dans le localStorage on incrémente le la quantité total des article
+  productArrayCart.forEach(function (el) {
+    //a chaque tours de boucle le total est incrémenter
+    Total += el.productQuantity;
+  });
+  TotalQuantity.innerText = Total;
 }
 
 //--------------------------------validation du formulaire----------------------
