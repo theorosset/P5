@@ -20,7 +20,7 @@ function itemSearchApi(article, productArrayCart) {
     const search = article.find(function ({ _id }) {
       return _id === el.productId;
     });
-    createInDom(productArrayCart, search);
+    createInDom(el, search);
   });
 }
 
