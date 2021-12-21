@@ -25,7 +25,8 @@ function itemSearchApi(article, productArrayCart) {
     });
     if (search) {
       createInDom(el, search);
-      //TotalPrice(productArrayCart, search);
+
+      TotalPrice(el, search);
     }
   });
 }
@@ -227,25 +228,21 @@ function TotalQuantity(productArrayCart) {
     //a chaque tours de boucle le total est incrémenter
     Total += el.productQuantity;
   });
+
   //on insere le total dans le DOM
   TotalQuantity.innerText = Total;
 }
 
 //----------------------------------calcule du produit total
 
-/*function TotalPrice(productArrayCart, search) {
+function TotalPrice(productArrayCart, search) {
   const priceTotal = document.querySelector("#totalPrice");
-  const inputQuantity = document.querySelectorAll(".itemQuantity");
-  //initalisation de la variable total
   let total = 0;
-
-  for (let i = 0; i < productArrayCart.length; i += 1) {
-    console.log((total += productArrayCart[i].productQuantity * search.price));
-  }
-  console.log(search.price);
+  console.log(productArrayCart);
   console.log(search);
-  priceTotal.innerText = total;
-}*/
+  total += productArrayCart.productQuantity;
+  console.log(total);
+}
 
 //--------------------------------validation du formulaire----------------------
 function formValid() {
