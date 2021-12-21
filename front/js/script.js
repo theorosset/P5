@@ -20,7 +20,7 @@ function getArticles() {
       })
       //on capture l'erreur si il y en a une
       .catch(function error() {
-        items.innerHTML = `<p>Nous ne pouvons pas afficher les produit actuellement</p>`;
+        items.innerHTML = `<p>Nous ne pouvons pas afficher les produits actuellement</p>`;
       })
   );
 }

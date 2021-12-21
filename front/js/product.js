@@ -127,7 +127,6 @@ function addLocal(product) {
       else {
         productArrayCart.push(productChoose);
         localStorage.setItem("product", JSON.stringify(productArrayCart));
-
         console.log(productArrayCart);
       }
     }
