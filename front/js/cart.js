@@ -12,7 +12,7 @@ async function postItem() {
   if (productArrayCart != null) {
     itemSearchApi(articles, productArrayCart);
     deletItem(productArrayCart, articles);
-    modifQuantity(productArrayCart);
+    modifQuantity(productArrayCart, articles);
     TotalQuantity(productArrayCart);
   }
 }
@@ -24,8 +24,8 @@ function itemSearchApi(article, productArrayCart) {
       return _id === el.productId;
     });
     if (search) {
+      modifQuantity(productArrayCart, search);
       createInDom(el, search);
-
       TotalPrice(el, search);
     }
   });
@@ -204,6 +204,7 @@ function modifQuantity(productArrayCart, search) {
           console.log("qté :" + newQuantity);
           el.productQuantity = newQuantity;
 
+          TotalPrice(productArrayCart, search);
           TotalQuantity(productArrayCart);
           localStorage.setItem("product", JSON.stringify(productArrayCart));
         }
@@ -234,13 +235,14 @@ function TotalQuantity(productArrayCart) {
 }
 
 //----------------------------------calcule du produit total
-
+let total = 0;
 function TotalPrice(productArrayCart, search) {
   const priceTotal = document.querySelector("#totalPrice");
-  let total = 0;
-  console.log(productArrayCart);
-  console.log(search);
-  total += productArrayCart.productQuantity;
+
+  total += productArrayCart.productQuantity * search.price;
+
+  priceTotal.innerText = total;
+
   console.log(total);
 }
 
