@@ -187,21 +187,19 @@ function deletItem(productArrayCart) {
           console.log(article);
 
           // suppression de l'élément séléctionner
-          productArrayCart.splice(productArrayCart.length, article);
+          productArrayCart.splice(article, article);
 
           if (article == []) {
             productArrayCart.splice(0, 1);
           }
-
-          localStorage.setItem("product", JSON.stringify(productArrayCart));
-          location.reload();
         }
+        localStorage.setItem("product", JSON.stringify(productArrayCart));
+        location.reload();
       });
     });
   });
   console.log(productArrayCart);
 }
-
 /**
  * --------------------modification de la quantité--------------
  * @param {object[]} productArrayCart élément dans le local storage
