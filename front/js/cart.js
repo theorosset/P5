@@ -10,23 +10,27 @@ async function postItem() {
 
   //si il y a quelque chose dans le localstorage
   if (productArrayCart != null) {
-    itemSearchApi(articles, productArrayCart);
+    itemSearchApi(productArrayCart, articles);
     deletItem(productArrayCart, articles);
     modifQuantity(productArrayCart, articles);
     TotalQuantity(productArrayCart);
+    TotalPrice(productArrayCart, articles);
   }
 }
 
-//fonction pour récuperer les bonne information de l'api par rapport au info du local storage
-function itemSearchApi(article, productArrayCart) {
+/**
+ *fonction pour récuperer les bonne information de l'api par rapport au info du LS
+ * @param {object[]} productArrayCart produit dans le panier
+ * @param {object[]} article  info des article  dans l'api
+ *
+ */
+function itemSearchApi(productArrayCart, article) {
   productArrayCart.forEach((el) => {
-    const search = article.find(function ({ _id }) {
+    const searchArticle = article.find(function ({ _id }) {
       return _id === el.productId;
     });
-    if (search) {
-      modifQuantity(productArrayCart, search);
-      createInDom(el, search);
-      TotalPrice(el, search);
+    if (searchArticle) {
+      createInDom(el, searchArticle);
     }
   });
 }
@@ -47,8 +51,14 @@ function getArticles() {
   );
 }
 
-//fonction pour inserez les elements dans le dom
-function createInDom(productArrayCart, search) {
+/**
+ *--------fonction pour inserez les elements dans le dom
+ *
+ *  @param {object[]} productArrayCart élément du panier
+ * @param {object} cart info de l'article dans l'api
+ * @type {createElement} creation des balise dans le DOM
+ */
+function createInDom(productArrayCart, cart) {
   const cartItems = document.querySelector("#cart__items");
 
   //--------------------creation-------------------------------------
@@ -95,14 +105,14 @@ function createInDom(productArrayCart, search) {
   //insertion de l'image
   const img = document.createElement("img");
   divImg.appendChild(img);
-  img.src = search.imageUrl;
-  img.altTxt = search.altTxt;
+  img.src = cart.imageUrl;
+  img.altTxt = cart.altTxt;
 
   // insertion du nom du produit
   const productName = document.createElement("h2");
 
   divNamePriceColors.appendChild(productName);
-  productName.innerText = search.name;
+  productName.innerText = cart.name;
 
   //insertion de la couleur
   const productColor = document.createElement("p");
@@ -116,7 +126,7 @@ function createInDom(productArrayCart, search) {
 
   divNamePriceColors.appendChild(productPrice);
 
-  productPrice.innerText = search.price + " €";
+  productPrice.innerText = cart.price + " €";
   //insertion de la quantite
   const quantityP = document.createElement("p");
 
@@ -147,7 +157,8 @@ function createInDom(productArrayCart, search) {
 /**
  * -----------------------suppression de l'article dans le panier
  *
- * @param {object} productArrayCart  produit dans le ls
+ * @param {object[]} productArrayCart  produit dans le ls
+ *
  */
 function deletItem(productArrayCart) {
   const btnDelet = document.querySelectorAll(".deleteItem");
@@ -164,12 +175,27 @@ function deletItem(productArrayCart) {
     // au clique sur  supprimer on supprime le bonne article
     btn.addEventListener("click", function () {
       productArrayCart.forEach(function (el) {
+        //si le produit selectionner a la meme couleur et id dans le ls que dans le dataset
         if (el.productId === id && el.productColor === color) {
-          delete el.productId;
-          delete el.productQuantity;
-          delete el.productColor;
+          //alors on recherche l'index dans le tableau du ls
+          const article = productArrayCart.findIndex(function ({
+            productId,
+            productColor,
+          }) {
+            return productId === id && productColor === color;
+          });
+          console.log(article);
+
+          // suppression de l'élément séléctionner
+          productArrayCart.splice(productArrayCart.length, article);
+
+          if (article == []) {
+            productArrayCart.splice(0, 1);
+          }
+
+          localStorage.setItem("product", JSON.stringify(productArrayCart));
+          location.reload();
         }
-        localStorage.setItem("product", JSON.stringify(productArrayCart));
       });
     });
   });
@@ -178,10 +204,10 @@ function deletItem(productArrayCart) {
 
 /**
  * --------------------modification de la quantité--------------
- *
- *
+ * @param {object[]} productArrayCart élément dans le local storage
+ * @param {object[]} articles article dans l'api
  */
-function modifQuantity(productArrayCart, search) {
+function modifQuantity(productArrayCart, article) {
   const inputQuantity = document.querySelectorAll(".itemQuantity");
 
   //pour chaque input quantité
@@ -204,23 +230,22 @@ function modifQuantity(productArrayCart, search) {
           console.log("qté :" + newQuantity);
           el.productQuantity = newQuantity;
 
-          TotalPrice(productArrayCart, search);
           TotalQuantity(productArrayCart);
           localStorage.setItem("product", JSON.stringify(productArrayCart));
         }
       });
+      TotalPrice(productArrayCart, article);
     });
   });
 }
 /**
  * ----------------------------------calcule de la quantité total
  *
- * @param {object} productArrayCart
+ * @param {object[]} productArrayCart élément dans le panier
  * @type {HTMLHtmlElement} emplacement de la quantité total
  */
 
 function TotalQuantity(productArrayCart) {
-  const TotalQuantity = document.querySelector("#totalQuantity");
   //on iniatilise le total
   let Total = 0;
 
@@ -231,22 +256,31 @@ function TotalQuantity(productArrayCart) {
   });
 
   //on insere le total dans le DOM
-  TotalQuantity.innerText = Total;
+  document.querySelector("#totalQuantity").innerText = Total;
 }
 
-//----------------------------------calcule du produit total
-let total = 0;
-function TotalPrice(productArrayCart, search) {
-  const priceTotal = document.querySelector("#totalPrice");
+/**
+ *
+ * @param {object[]} productArrayCart élément dans le panier
+ * @param {object[]} article info des articles depuis l'api
+ */
 
-  total += productArrayCart.productQuantity * search.price;
-
-  priceTotal.innerText = total;
-
+function TotalPrice(productArrayCart, article) {
+  let total = 0;
+  productArrayCart.forEach(function ({ productId, productQuantity }) {
+    console.log(productId);
+    const cart = article.find(function ({ _id }) {
+      return _id === productId;
+    });
+    if (cart) {
+      total += productQuantity * cart.price;
+    }
+  });
   console.log(total);
+  document.querySelector("#totalPrice").innerText = total;
 }
-
 //--------------------------------validation du formulaire----------------------
+
 function formValid() {
   const form = document.querySelector(".cart__order__form");
   const order = document.querySelector("#order");
@@ -284,7 +318,7 @@ function formValid() {
 
 function FirstnameValid(inputFirstName) {
   // Ajout du Regex
-  let nameRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
+  let nameRegExp = new RegExp("^[a-zA-Z '-]{2, 10}+$");
   //test de notre expression reguliere
   let testName = nameRegExp.test(inputFirstName.value);
   console.log(testName);
@@ -365,7 +399,6 @@ function AdressValid(inputAddress) {
 function CityValid(inputCity) {
   let cityRegExp = new RegExp("^[a-zA-Z]+(?:[s-][a-zA-Z]+)*$");
   let cityTest = cityRegExp.test(inputCity.value);
-  console.log(cityTest);
 
   if (cityTest === false) {
     document.querySelector("#cityErrorMsg").innerText =
