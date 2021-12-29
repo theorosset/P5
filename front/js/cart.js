@@ -1,8 +1,8 @@
 //repartition des produit du ls dans page panier
-postItem();
+main();
 
 //fonction qui se jouera uniquement si la promesse est résolue
-async function postItem() {
+async function main() {
   //recuperation des articles dans le ls
   let productArrayCart = JSON.parse(localStorage.getItem("product"));
 
@@ -299,6 +299,7 @@ function TotalPrice(productArrayCart, article) {
 
 function formValid(productArrayCart) {
   const form = document.querySelector(".cart__order__form");
+
   const order = document.querySelector("#order");
 
   //console.log(form);
@@ -479,20 +480,16 @@ function emailValid(inputEmail) {
 //---------------------confirmation
 function SendInfo(productArrayCart) {
   const form = document.querySelector(".cart__order__form");
+  const formData = new FormData(form);
+  console.log(Object.fromEntries(formData.entries()));
 
-  let productId = [];
-  for (i = 0; i < productArrayCart.length; i++) {
-    productId.push(productArrayCart[i].productId);
-  }
+  let productId = productArrayCart.map(function (product) {
+    return product.productId;
+  });
 
   const order = {
-    contact: {
-      firstName: form.firstName.value,
-      lastName: form.lastName.value,
-      address: form.address.value,
-      city: form.city.value,
-      email: form.email.value,
-    },
+    contact: Object.fromEntries(formData.entries()),
+
     products: productId,
   };
   console.log(order);
@@ -511,10 +508,9 @@ function SendInfo(productArrayCart) {
       return response.json();
     })
     .then((data) => {
-      console.log(data);
       localStorage.clear();
-      sessionStorage.setItem("orderId", data.orderId);
-      document.location.href = "confirmation.html";
+
+      document.location.href = `confirmation.html?id=${data.orderId}`;
     })
     .catch(function () {
       alert(

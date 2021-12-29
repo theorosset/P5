@@ -6,13 +6,13 @@ const urlId = urlParams.get("id");
 console.log(urlId);
 
 //fonction qui sera lu uniquement si la promesse est resolu
-postProduct();
+main();
 
 //--------fonction de repartition dans le DOM--------
-async function postProduct() {
+async function main() {
   const product = await getProducts();
-  const productCreate = createPlaceProduct(product);
-  const local = addLocal(product);
+  createPlaceProduct(product);
+  addLocal(product);
 }
 
 //--------fonction de recuperation des données du produit selectionner avec son id-------
