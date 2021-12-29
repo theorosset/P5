@@ -102,33 +102,39 @@ function addLocal(product) {
     }
 
     //
-    if (productChoose.productQuantity < 1) {
-      productChoose.productQuantity = 1;
-    }
-    // si il y a déja le même produit dans le panier
-    if (productArrayCart != null) {
-      const searchInLs = productArrayCart.find((procolorId) => {
-        return (
-          procolorId.productId === productChoose.productId &&
-          procolorId.productColor === productChoose.productColor
-        );
-      });
+    if (
+      productChoose.productQuantity > 0 &&
+      productChoose.productQuantity <= 100
+    ) {
+      // si il y a déja le même produit dans le panier
+      if (productArrayCart != null) {
+        const searchInLs = productArrayCart.find((procolorId) => {
+          return (
+            procolorId.productId === productChoose.productId &&
+            procolorId.productColor === productChoose.productColor
+          );
+        });
 
-      //si la recherche est validé
-      if (searchInLs) {
-        let TotalQuantity =
-          productChoose.productQuantity + searchInLs.productQuantity;
-        searchInLs.productQuantity = TotalQuantity;
-        console.log(productArrayCart);
-        localStorage.setItem("product", JSON.stringify(productArrayCart));
-      }
+        //si la recherche est validé
+        if (searchInLs) {
+          let TotalQuantity =
+            productChoose.productQuantity + searchInLs.productQuantity;
+          searchInLs.productQuantity = TotalQuantity;
+          console.log(productArrayCart);
+          localStorage.setItem("product", JSON.stringify(productArrayCart));
+          alert("Votre produit a été ajouté au panier");
+        }
 
-      //sinon on ajoute l'élément au panier
-      else {
-        productArrayCart.push(productChoose);
-        localStorage.setItem("product", JSON.stringify(productArrayCart));
-        console.log(productArrayCart);
+        //sinon on ajoute l'élément au panier
+        else {
+          productArrayCart.push(productChoose);
+          localStorage.setItem("product", JSON.stringify(productArrayCart));
+          console.log(productArrayCart);
+          alert("Votre produit a été ajouté au panier");
+        }
       }
+    } else {
+      alert("Veuillez saisir une quantité entre 1 et 100");
     }
   });
 }
