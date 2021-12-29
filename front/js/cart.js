@@ -224,19 +224,23 @@ function modifQuantity(productArrayCart, article) {
     //on enregistre chaque changement de la quantité dans le DOM
     inputQuantity.addEventListener("change", function (e) {
       e.preventDefault();
-      newQuantity = inputQuantity.valueAsNumber;
+      if (this.valueAsNumber > 0 && this.valueAsNumber <= 100) {
+        newQuantity = inputQuantity.valueAsNumber;
 
-      //pour chaque article du LS on enregistre la nouvelle quantité
-      productArrayCart.forEach(function (el) {
-        if (el.productId === id && el.productColor === color) {
-          console.log("qté :" + newQuantity);
-          el.productQuantity = newQuantity;
+        //pour chaque article du LS on enregistre la nouvelle quantité
+        productArrayCart.forEach(function (el) {
+          if (el.productId === id && el.productColor === color) {
+            console.log("qté :" + newQuantity);
+            el.productQuantity = newQuantity;
 
-          TotalQuantity(productArrayCart);
-          localStorage.setItem("product", JSON.stringify(productArrayCart));
-        }
-      });
-      TotalPrice(productArrayCart, article);
+            TotalQuantity(productArrayCart);
+            localStorage.setItem("product", JSON.stringify(productArrayCart));
+          }
+        });
+        TotalPrice(productArrayCart, article);
+      } else {
+        alert("Veuillez entrer une quantité entre 1 et 100");
+      }
     });
   });
 }
