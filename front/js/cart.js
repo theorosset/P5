@@ -377,7 +377,7 @@ function FirstnameValid(inputFirstName) {
  * */
 
 function LastnameValid(inputLastName) {
-  let nameRegExp = new RegExp("^([a-z]+)(s)?([a-z]*)$");
+  let nameRegExp = new RegExp("^([a-z]+)(s)?([a-z]*)$", "i");
   let testName = nameRegExp.test(inputLastName.value);
   console.log(testName);
 
@@ -411,7 +411,7 @@ function AdressValid(inputAddress) {
   //si le test renvoie false on ajoute le message d'erreur
   if (testAdress === false) {
     document.querySelector("#addressErrorMsg").innerText =
-      "Veuillez entrer une adress valide";
+      "Veuillez entrer une adresse valide";
   }
 
   //sinon aucun message ne s'affiche
