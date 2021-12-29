@@ -4,7 +4,7 @@ main();
 //fonction qui se jouera uniquement si la promesse est résolue
 async function main() {
   //recuperation des articles dans le ls
-  let productArrayCart = JSON.parse(localStorage.getItem("product"));
+  let productArrayCart = JSON.parse(localStorage.getItem("product")) || [];
 
   //recuperation des articles dans l'api
   let articles = await getArticles();
@@ -172,7 +172,7 @@ function deletItem(productArrayCart) {
   //pour chaque bouton supprimer on récupere son id et sa couleur
   btnDelet.forEach(function (btn) {
     // on recupere chaque bouton  le plus proche de l'élément parent (balise article)
-    const btnClosest = btn.closest("Article");
+    const btnClosest = btn.closest("article");
     const id = btnClosest.dataset.id;
     const color = btnClosest.dataset.color;
     console.log(id);
@@ -191,13 +191,10 @@ function deletItem(productArrayCart) {
       console.log(article);
 
       // suppression de l'élément séléctionner avec splice()
-      if (article) {
-        console.log(productArrayCart.splice(article, 1));
+      if (article !== -1) {
+        productArrayCart.splice(article, 1);
       }
 
-      if (article == []) {
-        productArrayCart.splice(0, 1);
-      }
       // on enregiste le changement dans le local storage
       localStorage.setItem("product", JSON.stringify(productArrayCart));
 
