@@ -215,7 +215,7 @@ function modifQuantity(productArrayCart, article) {
   //pour chaque input quantité
   inputQuantity.forEach(function (inputQuantity) {
     //on recupere les input qui son dans la balise article
-    const inputClosest = inputQuantity.closest("Article");
+    const inputClosest = inputQuantity.closest("article");
 
     let newQuantity = "";
     const id = inputClosest.dataset.id;

@@ -89,7 +89,8 @@ function addLocal(product) {
       productColor: document.querySelector("#colors").value,
       productQuantity: quantityInput.valueAsNumber,
     };
-    //etat par defaut
+
+    //etat par defaut du localStorage
     let productArrayCart = [];
 
     if (localStorage.getItem("product") != null) {
@@ -101,7 +102,7 @@ function addLocal(product) {
       return;
     }
 
-    //
+    //si la quantité choisit est supérieur a 0 et inférieur ou égal a 100
     if (
       productChoose.productQuantity > 0 &&
       productChoose.productQuantity <= 100

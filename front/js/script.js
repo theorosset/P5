@@ -6,6 +6,7 @@ main();
 async function main() {
   let articles = await getArticles();
 
+  // boucle permettant d'itérer dans les article
   for (let i = 0; i < articles.length; i++) {
     createElementInDOM(articles[i]);
   }
@@ -25,7 +26,13 @@ function getArticles() {
   );
 }
 
-//creation des articles a inserer dans le dom
+/**
+ * creation des articles a inserer dans le dom
+ *
+ * @param {object} article récuperation de l'article dans l'api
+ *
+ * @type {createElement} creation des balise dans le DOM
+ */
 function createElementInDOM(article) {
   //creation de notre lien dans le dom
   const link = document.createElement("a");
