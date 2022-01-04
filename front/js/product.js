@@ -109,10 +109,10 @@ function addLocal(product) {
     ) {
       // si il y a déja le même produit dans le panier
       if (productArrayCart != null) {
-        const searchInLs = productArrayCart.find((procolorId) => {
+        const searchInLs = productArrayCart.find((productColorId) => {
           return (
-            procolorId.productId === productChoose.productId &&
-            procolorId.productColor === productChoose.productColor
+            productColorId.productId === productChoose.productId &&
+            productColorId.productColor === productChoose.productColor
           );
         });
 

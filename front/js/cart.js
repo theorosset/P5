@@ -63,8 +63,8 @@ function getArticles() {
  * @param {object} cart info de l'article dans l'api
  * @type {createElement} creation des balise dans le DOM
  */
-function createInDom(productArrayCart, cart) {
-  console.log(cart);
+function createInDom(productArrayCart, data) {
+  console.log(data);
   const cartItems = document.querySelector("#cart__items");
 
   //--------------------creation-------------------------------------
@@ -111,14 +111,14 @@ function createInDom(productArrayCart, cart) {
   //insertion de l'image
   const img = document.createElement("img");
   divImg.appendChild(img);
-  img.src = cart.imageUrl;
-  img.altTxt = cart.altTxt;
+  img.src = data.imageUrl;
+  img.altTxt = data.altTxt;
 
   // insertion du nom du produit
   const productName = document.createElement("h2");
 
   divNamePriceColors.appendChild(productName);
-  productName.innerText = cart.name;
+  productName.innerText = data.name;
 
   //insertion de la couleur
   const productColor = document.createElement("p");
@@ -132,7 +132,7 @@ function createInDom(productArrayCart, cart) {
 
   divNamePriceColors.appendChild(productPrice);
 
-  productPrice.innerText = cart.price + " €";
+  productPrice.innerText = data.price + " €";
   //insertion de la quantite
   const quantityP = document.createElement("p");
 
