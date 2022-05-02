@@ -15,7 +15,7 @@ async function main() {
 //function pour contacter l'api et avoir les données en json
 function getArticles() {
   return (
-    fetch(`http://localhost:3000/api/products`)
+    fetch(`${urlApi}api/products`)
       .then(function (response) {
         return response.json();
       })

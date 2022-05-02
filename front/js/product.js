@@ -3,7 +3,6 @@ let url = window.location.search;
 
 let urlParams = new URLSearchParams(url);
 const urlId = urlParams.get("id");
-console.log(urlId);
 
 //fonction qui sera lu uniquement si la promesse est resolu
 main();
@@ -19,7 +18,7 @@ async function main() {
 
 function getProducts() {
   return (
-    fetch(`http://localhost:3000/api/products/${urlId}`)
+    fetch(`${urlApi}api/products/${urlId}`)
       .then(function (response) {
         return response.json();
       })
@@ -60,7 +59,6 @@ function createPlaceProduct(product) {
 
   // itération dans le tableau des couleur et inseration des couleur disponible
   for (let i = 0; i < product.colors.length; i += 1) {
-    console.log(product.colors[i]);
     let option = document.createElement("option");
     document.querySelector("#colors").appendChild(option);
     option.innerText = `${product.colors[i]}`;
@@ -121,7 +119,6 @@ function addLocal(product) {
           let TotalQuantity =
             productChoose.productQuantity + searchInLs.productQuantity;
           searchInLs.productQuantity = TotalQuantity;
-          console.log(productArrayCart);
           localStorage.setItem("product", JSON.stringify(productArrayCart));
           alert("Votre produit a été ajouté au panier");
         }
@@ -130,7 +127,6 @@ function addLocal(product) {
         else {
           productArrayCart.push(productChoose);
           localStorage.setItem("product", JSON.stringify(productArrayCart));
-          console.log(productArrayCart);
           alert("Votre produit a été ajouté au panier");
         }
       }

@@ -28,8 +28,6 @@ async function main() {
  *
  */
 function itemSearchApi(productArrayCart, article) {
-  console.log(productArrayCart);
-  console.log(article);
   productArrayCart.forEach((el) => {
     const searchArticle = article.find(function ({ _id }) {
       return _id === el.productId;
@@ -43,7 +41,7 @@ function itemSearchApi(productArrayCart, article) {
 //recuperation des articles dans l'api
 function getArticles() {
   return (
-    fetch(`http://localhost:3000/api/products`)
+    fetch(`${urlApi}api/products`)
       .then(function (response) {
         return response.json();
       })
@@ -64,7 +62,6 @@ function getArticles() {
  * @type {createElement} creation des balise dans le DOM
  */
 function createInDom(productArrayCart, data) {
-  console.log(data);
   const cartItems = document.querySelector("#cart__items");
 
   //--------------------creation-------------------------------------
@@ -175,8 +172,6 @@ function deletItem(productArrayCart) {
     const btnClosest = btn.closest("article");
     const id = btnClosest.dataset.id;
     const color = btnClosest.dataset.color;
-    console.log(id);
-    console.log(color);
 
     // au clique sur  supprimer on supprime le bonne article
     btn.addEventListener("click", function (e) {
@@ -188,7 +183,6 @@ function deletItem(productArrayCart) {
       }) {
         return productId === id && productColor === color;
       });
-      console.log(article);
 
       // suppression de l'élément séléctionner avec splice()
       if (article !== -1) {
@@ -202,7 +196,6 @@ function deletItem(productArrayCart) {
       location.reload();
     });
   });
-  console.log(productArrayCart);
 }
 /**
  * --------------------modification de la quantité--------------
@@ -230,7 +223,6 @@ function modifQuantity(productArrayCart, article) {
         //pour chaque article du LS on enregistre la nouvelle quantité
         productArrayCart.forEach(function (el) {
           if (el.productId === id && el.productColor === color) {
-            console.log("qté :" + newQuantity);
             el.productQuantity = newQuantity;
 
             TotalQuantity(productArrayCart);
@@ -280,7 +272,6 @@ function TotalPrice(productArrayCart, article) {
   let total = 0;
   //pour chaque produit dans le localstorage
   productArrayCart.forEach(function ({ productId, productQuantity }) {
-    console.log(productId);
     // on recupere le bon produit par rapport a l'id dans le ls et a l'id dans l'api
     const cart = article.find(function ({ _id }) {
       return _id === productId;
@@ -289,12 +280,9 @@ function TotalPrice(productArrayCart, article) {
     if (cart) {
       total += productQuantity * cart.price;
     }
-    console.log(total);
   });
   // on ecrit le total dans le DOM
   priceTotal.innerText = total;
-
-  console.log(total);
 }
 //--------------------------------validation du formulaire----------------------
 
@@ -302,8 +290,6 @@ function formValid(productArrayCart) {
   const form = document.querySelector(".cart__order__form");
 
   const order = document.querySelector("#order");
-
-  //console.log(form);
 
   form.firstName.addEventListener("input", function () {
     FirstnameValid(form.firstName);
@@ -355,7 +341,6 @@ function FirstnameValid(inputFirstName) {
   let nameRegExp = new RegExp("^([a-z]+)(s)?([a-z]*)$", "i");
   //test de notre expression reguliere
   let testName = nameRegExp.test(inputFirstName.value);
-  console.log(testName);
   //si le test renvoie false on ajoute le message d'erreur
   if (testName === false) {
     document.querySelector("#firstNameErrorMsg").innerText =
@@ -379,7 +364,6 @@ function FirstnameValid(inputFirstName) {
 function LastnameValid(inputLastName) {
   let nameRegExp = new RegExp("^([a-z]+)(s)?([a-z]*)$", "i");
   let testName = nameRegExp.test(inputLastName.value);
-  console.log(testName);
 
   //si le test renvoie false on ajoute le message d'erreur
   if (testName === false) {
@@ -406,7 +390,6 @@ function AdressValid(inputAddress) {
     "[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+"
   );
   let testAdress = AdressRegExp.test(inputAddress.value);
-  console.log(testAdress);
 
   //si le test renvoie false on ajoute le message d'erreur
   if (testAdress === false) {
@@ -432,7 +415,6 @@ function AdressValid(inputAddress) {
 function CityValid(inputCity) {
   let cityRegExp = new RegExp("^[a-zA-Z]+(?:[s-][a-zA-Z]+)*$");
   let cityTest = cityRegExp.test(inputCity.value);
-  console.log(cityTest);
 
   if (cityTest === false) {
     document.querySelector("#cityErrorMsg").innerText =
@@ -458,7 +440,6 @@ function emailValid(inputEmail) {
     "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,15}$"
   );
   let emailTest = emailRegExp.test(inputEmail.value);
-  console.log(emailTest);
 
   if (emailTest === false) {
     document.querySelector("#emailErrorMsg").innerText =
@@ -482,7 +463,6 @@ function emailValid(inputEmail) {
 function SendInfo(productArrayCart) {
   const form = document.querySelector(".cart__order__form");
   const formData = new FormData(form);
-  console.log(Object.fromEntries(formData.entries()));
 
   let productId = productArrayCart.map(function (product) {
     return product.productId;
@@ -493,7 +473,7 @@ function SendInfo(productArrayCart) {
 
     products: productId,
   };
-  console.log(order);
+
   const options = {
     method: "POST",
     body: JSON.stringify(order),
@@ -504,7 +484,7 @@ function SendInfo(productArrayCart) {
   };
 
   //on contatcte l'api pour recuperer le numero de commande selon les réglages etablie dans la constante options
-  fetch("http://localhost:3000/api/products/order", options)
+  fetch(`${urlApi}api/products/order`, options)
     .then(function (response) {
       return response.json();
     })
